@@ -22,7 +22,7 @@ public class DeliveryServiceImpl implements DeliveryService {
   @Autowired
   PersonService personService;
 
-  public ApiResponse<Delivery> createNewDeliveryOrder(DeliveryDto deliveryRequest) {
+  public ApiResponse<Delivery> createNewDelivery(DeliveryDto deliveryRequest) {
       try{
           Optional<Person> deliveryMan = personService.findPersonByIdAndType
                   (deliveryRequest.getDeliveryManId(), PERSON_TYPE.DELIVERY_MAN);
@@ -30,7 +30,7 @@ public class DeliveryServiceImpl implements DeliveryService {
           if(deliveryMan.isEmpty()) {
               throw new Exception("Invalid delivery man id");
           }
-          if(getLastOrder(deliveryMan.get().getId()).isPresent()){
+          if(getLastOrderByDeliveryManId(deliveryMan.get().getId()).isPresent()){
               throw new Exception("Delivery man already have order");
           }
           Optional<Person> customer = personService.findPersonByIdAndType
@@ -54,7 +54,7 @@ public class DeliveryServiceImpl implements DeliveryService {
 
           return ApiResponse.<Delivery>builder()
                   .success(true)
-                  .message("Delivery Order Created successfully")
+                  .message("Delivery Created successfully")
                   .data(savedDelivery)
                   .build();
       }
@@ -62,7 +62,7 @@ public class DeliveryServiceImpl implements DeliveryService {
 
           return ApiResponse.<Delivery>builder()
                   .success(false)
-                  .message("EError Occurred while creating new delivery: " + e.getMessage())
+                  .message(e.getMessage())
                   .data(null)
                   .build();
       }
@@ -75,8 +75,41 @@ public class DeliveryServiceImpl implements DeliveryService {
     }else return null;
   }
 
-  private Optional<Delivery> getLastOrder(Long deliveryManId){
+  @Override
+  public ApiResponse<Delivery> orderDelivered(Long deliveryId){
+      try{
+
+          Optional<Delivery> lastDelivery = getLastOrderByDeliveryId(deliveryId);
+          if(lastDelivery.isEmpty() || !lastDelivery.get().isStatus()){
+              throw new Exception("Delivery Not Found or Already Delivered");
+          }
+
+          lastDelivery.get().setEndTime(Instant.now());
+          lastDelivery.get().setStatus(false); //delivered so status false.
+
+          Delivery updatedDelivery = deliveryRepository.save(lastDelivery.get());
+
+          return ApiResponse.<Delivery>builder()
+                  .success(true)
+                  .message("Delivery Delivered successfully")
+                  .data(null)
+                  .build();
+      }
+      catch (Exception e){
+          return ApiResponse.<Delivery>builder()
+                  .success(false)
+                  .message(e.getMessage())
+                  .data(null)
+                  .build();
+      }
+  }
+
+  private Optional<Delivery> getLastOrderByDeliveryManId(Long deliveryManId){
       return deliveryRepository.findByDeliveryManIdAndStatusTrue(deliveryManId);
   }
+
+    private Optional<Delivery> getLastOrderByDeliveryId(Long deliveryId){
+        return deliveryRepository.findById(deliveryId);
+    }
 
 }

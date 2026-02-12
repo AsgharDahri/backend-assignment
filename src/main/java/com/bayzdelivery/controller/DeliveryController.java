@@ -3,16 +3,11 @@ package com.bayzdelivery.controller;
 import com.bayzdelivery.dtos.ApiResponse;
 import com.bayzdelivery.dtos.DeliveryDto;
 import com.bayzdelivery.model.Delivery;
-import com.bayzdelivery.model.Person;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.bayzdelivery.service.DeliveryService;
 
 @RestController("/delivery")
@@ -22,8 +17,18 @@ public class DeliveryController {
   DeliveryService deliveryService;
 
     @PostMapping
-    public ResponseEntity<ApiResponse<Delivery>> createNewDelivery(@Valid @RequestBody DeliveryDto deliveryRequest) {
-        ApiResponse<Delivery> response = deliveryService.createNewDeliveryOrder(deliveryRequest);
+    public ResponseEntity<ApiResponse<Delivery>> createNewDeliveryOrder(@Valid @RequestBody DeliveryDto deliveryRequest) {
+        ApiResponse<Delivery> response = deliveryService.createNewDelivery(deliveryRequest);
+        HttpStatus status = response.isSuccess()
+                ? HttpStatus.OK
+                : HttpStatus.BAD_REQUEST;
+        return ResponseEntity.status(status).body(response);
+    }
+
+    // When order delivered,
+    @PutMapping
+    public ResponseEntity<ApiResponse<Delivery>> deliveredOrder(@RequestParam Long deliveryId) {
+        ApiResponse<Delivery> response = deliveryService.orderDelivered(deliveryId);
         HttpStatus status = response.isSuccess()
                 ? HttpStatus.OK
                 : HttpStatus.BAD_REQUEST;

@@ -6,7 +6,8 @@ import com.bayzdelivery.model.Delivery;
 
 public interface DeliveryService {
 
-  public ApiResponse<Delivery> createNewDeliveryOrder(DeliveryDto deliveryRequest);
+  public ApiResponse<Delivery> createNewDelivery(DeliveryDto deliveryRequest);
 
+    public ApiResponse<Delivery> orderDelivered(Long deliveryId);
   public Delivery findById(Long deliveryId);
 }

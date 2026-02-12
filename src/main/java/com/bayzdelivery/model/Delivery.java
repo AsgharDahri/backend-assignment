@@ -42,7 +42,7 @@ public class Delivery implements Serializable{
   Long distance;
 
   @Column
-          @Builder.Default
+  @Builder.Default
   boolean status = true;
 
 
