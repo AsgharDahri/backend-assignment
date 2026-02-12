@@ -11,9 +11,11 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
+import lombok.Data;
 
 @Entity
 @Table(name = "delivery")
+@Data
 public class Delivery implements Serializable{
 
   private static final long serialVersionUID = 123765351514001L;
@@ -36,8 +38,8 @@ public class Delivery implements Serializable{
   @Column(name = "price")
   Long price;
 
-  @Column(name = "comission")
-  Long comission;
+  @Column(name = "commission")
+  Long commission;
 
   @ManyToOne
   @JoinColumn(name = "delivery_man_id", referencedColumnName = "id")
@@ -46,72 +48,6 @@ public class Delivery implements Serializable{
   @ManyToOne
   @JoinColumn(name = "customer_id", referencedColumnName = "id")
   Person customer;
-
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
-  }
-
-  public Instant getStartTime() {
-    return startTime;
-  }
-
-  public void setStartTime(Instant startTime) {
-    this.startTime = startTime;
-  }
-
-  public Instant getEndTime() {
-    return endTime;
-  }
-
-  public void setEndTime(Instant endTime) {
-    this.endTime = endTime;
-  }
-
-  public Long getDistance() {
-    return distance;
-  }
-
-  public void setDistance(Long distance) {
-    this.distance = distance;
-  }
-
-  public Long getPrice() {
-    return price;
-  }
-
-  public void setPrice(Long price) {
-    this.price = price;
-  }
-
-  public Long getComission() {
-    return comission;
-  }
-
-  public void setComission(Long comission) {
-    this.comission = comission;
-  }
-
-  public Person getDeliveryMan() {
-    return deliveryMan;
-  }
-
-  public void setDeliveryMan(Person deliveryMan) {
-    this.deliveryMan = deliveryMan;
-  }
-
-  public Person getCustomer() {
-    return customer;
-  }
-
-  public void setCustomer(Person customer) {
-    this.customer = customer;
-  }
-
-
 
   @Override
   public int hashCode() {
