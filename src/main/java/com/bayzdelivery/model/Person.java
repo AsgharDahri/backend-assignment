@@ -1,17 +1,20 @@
 package com.bayzdelivery.model;
 
 import java.io.Serializable;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+
+import com.bayzdelivery.utilites.PERSON_TYPE;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 
 @Entity
 @Table(name = "person")
+@Data
+@Builder
+@AllArgsConstructor
 public class Person implements Serializable{
 
   private static final long serialVersionUID = 432154291451321L;
@@ -29,6 +32,11 @@ public class Person implements Serializable{
   @Email
   @Column(name = "email")
   String email;
+
+  @NotNull
+  @Column(name = "type")
+  @Enumerated(EnumType.STRING)
+  PERSON_TYPE type;
 
   @Column(name = "registration_number")
   String registrationNumber;

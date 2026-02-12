@@ -10,18 +10,18 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import com.bayzdelivery.service.DeliveryService;
 
-@RestController
+@RestController("/delivery")
 public class DeliveryController {
 
   @Autowired
   DeliveryService deliveryService;
 
-  @PostMapping(path ="/delivery")
+  @PostMapping(path ="")
   public ResponseEntity<Delivery> createNewDelivery(@RequestBody Delivery delivery) {
     return ResponseEntity.ok(deliveryService.save(delivery));
   }
 
-  @GetMapping(path = "/delivery/{delivery-id}")
+  @GetMapping(path = "/{delivery-id}")
   public ResponseEntity<Delivery> getDeliveryById(@PathVariable(name="delivery-id",required=true)Long deliveryId){
     Delivery delivery = deliveryService.findById(deliveryId);
     if (delivery !=null)
