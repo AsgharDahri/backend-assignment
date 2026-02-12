@@ -8,13 +8,14 @@ import lombok.Data;
 
 @Data
 public class PersonDto {
-    private Long id;
+
 
     @NotBlank(message = "Name is required")
     private String name;
 
     @Email(message = "Invalid email format")
     @NotBlank(message = "Email is required")
+    @NotNull(message = "Email is required")
     private String email;
 
     @NotNull(message = "Person type is required")
