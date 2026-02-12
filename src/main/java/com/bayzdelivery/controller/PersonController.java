@@ -23,8 +23,8 @@ public class PersonController {
   PersonService personService;
 
   @PostMapping(path = "/person")
-  public ResponseEntity<ApiResponse<Person>> register(@Valid @RequestBody PersonDto p) {
-    ApiResponse<Person> response = personService.save(p);
+  public ResponseEntity<ApiResponse<Person>> registerPerson(@Valid @RequestBody PersonDto p) {
+    ApiResponse<Person> response = personService.registerPerson(p);
     HttpStatus status = response.getMessage().startsWith("Database error")
         ? HttpStatus.INTERNAL_SERVER_ERROR : HttpStatus.OK;
     return ResponseEntity.status(status).body(response);
@@ -32,7 +32,7 @@ public class PersonController {
 
   @GetMapping(path = "/person")
   public ResponseEntity<ApiResponse<List<Person>>> getAllPersons() {
-    ApiResponse<List<Person>> response = personService.getAll();
+    ApiResponse<List<Person>> response = personService.getAllPeople();
     HttpStatus status = response.getMessage().startsWith("Error retrieving")
         ? HttpStatus.INTERNAL_SERVER_ERROR : HttpStatus.OK;
     return ResponseEntity.status(status).body(response);
@@ -40,7 +40,7 @@ public class PersonController {
 
   @GetMapping(path = "/person/{person-id}")
   public ResponseEntity<ApiResponse<Person>> getPersonById(@PathVariable(name="person-id", required=true)Long personId) {
-    ApiResponse<Person> response = personService.findById(personId);
+    ApiResponse<Person> response = personService.findPersonByid(personId);
     HttpStatus status = response.getMessage().startsWith("Error retrieving") 
         ? HttpStatus.INTERNAL_SERVER_ERROR : HttpStatus.OK;
     return ResponseEntity.status(status).body(response);

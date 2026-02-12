@@ -8,6 +8,7 @@ import com.bayzdelivery.dtos.ApiResponse;
 import com.bayzdelivery.dtos.PersonDto;
 import com.bayzdelivery.repositories.PersonRepository;
 import com.bayzdelivery.model.Person;
+import com.bayzdelivery.utilites.PERSON_TYPE;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +19,7 @@ public class PersonServiceImpl implements PersonService {
     PersonRepository personRepository;
 
     @Override
-    public ApiResponse<List<Person>> getAll() {
+    public ApiResponse<List<Person>> getAllPeople() {
         try {
             List<Person> personList = new ArrayList<>();
             personRepository.findAll().forEach(personList::add);
@@ -39,9 +40,9 @@ public class PersonServiceImpl implements PersonService {
     }
 
     @Override
-    public ApiResponse<Person> save(PersonDto personRequest) {
+    public ApiResponse<Person> registerPerson(PersonDto personRequest) {
         try {
-            if(isPersonExist(personRequest).isPresent()) {
+            if(isPersonExistByEmail(personRequest.getEmail()).isPresent()) {
 
                 return ApiResponse.<Person>builder()
                         .success(false)
@@ -74,9 +75,9 @@ public class PersonServiceImpl implements PersonService {
     }
 
     @Override
-    public ApiResponse<Person> findById(Long personId) {
+    public ApiResponse<Person> findPersonByid(Long personId) {
         try {
-            Optional<Person> dbPerson = personRepository.findById(personId);
+            Optional<Person> dbPerson = isPersonExistById(personId);
             if (dbPerson.isPresent()) {
 
                 return ApiResponse.<Person>builder()
@@ -102,7 +103,17 @@ public class PersonServiceImpl implements PersonService {
         }
     }
 
-    private Optional<Person> isPersonExist(PersonDto personRequest) {
-        return personRepository.findByEmail(personRequest.getEmail());
+    private Optional<Person> isPersonExistByEmail(String email) {
+        return personRepository.findByEmail(email);
+    }
+
+
+    private Optional<Person> isPersonExistById(Long personId) {
+        return personRepository.findById(Long.valueOf(personId));
+    }
+
+    @Override
+    public Optional<Person> findPersonByIdAndType(Long personId, PERSON_TYPE type) {
+        return personRepository.findByIdAndType(Long.valueOf(personId),  type);
     }
 }
