@@ -5,10 +5,14 @@ import com.bayzdelivery.dtos.DeliveryDto;
 import com.bayzdelivery.model.Delivery;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.bayzdelivery.service.DeliveryService;
+
+import java.time.Instant;
+import java.util.Map;
 
 @RestController("/delivery")
 public class DeliveryController {
@@ -42,6 +46,14 @@ public class DeliveryController {
       return ResponseEntity.ok(delivery);
     return ResponseEntity.notFound().build();
   }
+
+    @GetMapping("/top-delivery-man")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> getTopDeliveryMan(
+            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant startDate,
+            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant endDate) {
+
+        return ResponseEntity.ok(deliveryService.getTopDeliveryMan(startDate, endDate));
+    }
 }
 
 

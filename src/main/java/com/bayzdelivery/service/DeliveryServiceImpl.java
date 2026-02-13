@@ -1,16 +1,21 @@
 package com.bayzdelivery.service;
 
 import java.time.Instant;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import com.bayzdelivery.dtos.ApiResponse;
 import com.bayzdelivery.dtos.DeliveryDto;
+import com.bayzdelivery.dtos.TopDeliveryManDto;
 import com.bayzdelivery.model.Person;
 import com.bayzdelivery.repositories.DeliveryRepository;
 import com.bayzdelivery.model.Delivery;
 import com.bayzdelivery.utilites.Formulae;
 import com.bayzdelivery.utilites.PERSON_TYPE;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -87,7 +92,7 @@ public class DeliveryServiceImpl implements DeliveryService {
           lastDelivery.get().setEndTime(Instant.now());
           lastDelivery.get().setStatus(false); //delivered so status false.
 
-          Delivery updatedDelivery = deliveryRepository.save(lastDelivery.get());
+          deliveryRepository.save(lastDelivery.get());
 
           return ApiResponse.<Delivery>builder()
                   .success(true)
@@ -111,5 +116,30 @@ public class DeliveryServiceImpl implements DeliveryService {
     private Optional<Delivery> getLastOrderByDeliveryId(Long deliveryId){
         return deliveryRepository.findById(deliveryId);
     }
+    public ApiResponse<Map<String, Object>> getTopDeliveryMan(Instant startDate, Instant endDate) {
+        try {
+            // Fetch top 3 using PageRequest
+            List<TopDeliveryManDto> topEarners = deliveryRepository.findTop3DeliveryMenByCommission(
+                    startDate, endDate, PageRequest.of(0, 3));
 
+            // Fetch overall average
+            Double avgCommission = deliveryRepository.getAverageCommissionInInterval(startDate, endDate);
+
+            // Prepare a combined response map
+            Map<String, Object> report = new HashMap<>();
+            report.put("topEarners", topEarners);
+            report.put("averageCommission", avgCommission != null ? avgCommission : 0.0);
+
+            return ApiResponse.<Map<String, Object>>builder()
+                    .success(true)
+                    .message("Report generated successfully")
+                    .data(report)
+                    .build();
+        } catch (Exception e) {
+            return ApiResponse.<Map<String, Object>>builder()
+                    .success(false)
+                    .message("Error generating report: " + e.getMessage())
+                    .build();
+        }
+    }
 }
