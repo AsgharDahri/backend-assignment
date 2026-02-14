@@ -20,6 +20,7 @@ public class DeliveryController {
   @Autowired
   DeliveryService deliveryService;
 
+    //Create delivery.
     @PostMapping
     public ResponseEntity<ApiResponse<Delivery>> createNewDeliveryOrder(@Valid @RequestBody DeliveryDto deliveryRequest) {
         ApiResponse<Delivery> response = deliveryService.createNewDelivery(deliveryRequest);
@@ -29,7 +30,7 @@ public class DeliveryController {
         return ResponseEntity.status(status).body(response);
     }
 
-    // When order delivered,
+    // when delivery delevered.
     @PutMapping
     public ResponseEntity<ApiResponse<Delivery>> deliveredOrder(@RequestParam Long deliveryId) {
         ApiResponse<Delivery> response = deliveryService.orderDelivered(deliveryId);
@@ -40,11 +41,9 @@ public class DeliveryController {
     }
 
   @GetMapping(path = "/{delivery-id}")
-  public ResponseEntity<Delivery> getDeliveryById(@PathVariable(name="delivery-id",required=true)Long deliveryId){
-    Delivery delivery = deliveryService.findById(deliveryId);
-    if (delivery !=null)
+  public ResponseEntity<ApiResponse<Object>> getDeliveryById(@PathVariable(name="delivery-id",required=true)Long deliveryId){
+      ApiResponse<Object> delivery = deliveryService.findById(deliveryId);
       return ResponseEntity.ok(delivery);
-    return ResponseEntity.notFound().build();
   }
 
     @GetMapping("/top-delivery-man")

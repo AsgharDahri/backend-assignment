@@ -9,12 +9,9 @@ import com.bayzdelivery.model.Person;
 import com.bayzdelivery.utilites.PERSON_TYPE;
 
 public interface PersonService {
-  public ApiResponse<List<Person>> getAllPeople();
-
-  public ApiResponse<Person> registerPerson(PersonDto p);
-
-  public ApiResponse<Person> findPersonByid(Long personId);
-
-  Optional<Person> findPersonByIdAndType(Long personId, PERSON_TYPE type);
+    ApiResponse<List<Object>> getAllPeople();
+    ApiResponse<Object> registerPerson(PersonDto p);
+    ApiResponse<Object> findPersonByid(Long personId);
+    Optional<Person> findPersonByIdAndType(Long personId, PERSON_TYPE type);
 
 }

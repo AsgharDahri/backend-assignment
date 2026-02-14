@@ -60,6 +60,4 @@ public class Delivery implements Serializable{
   @JoinColumn(name = "customer_id", referencedColumnName = "id")
   Person customer;
 
-
-
 }

@@ -31,7 +31,6 @@ public class DeliveryServiceImpl implements DeliveryService {
       try{
           Optional<Person> deliveryMan = personService.findPersonByIdAndType
                   (deliveryRequest.getDeliveryManId(), PERSON_TYPE.DELIVERY_MAN);
-
           if(deliveryMan.isEmpty()) {
               throw new Exception("Invalid delivery man id");
           }
@@ -73,25 +72,44 @@ public class DeliveryServiceImpl implements DeliveryService {
       }
   }
 
-  public Delivery findById(Long deliveryId) {
-    Optional<Delivery> optionalDelivery = deliveryRepository.findById(deliveryId);
-    if (optionalDelivery.isPresent()) {
-      return optionalDelivery.get();
-    }else return null;
+  public ApiResponse<Object> findById(Long deliveryId) {
+      try{
+          Optional<Delivery> delivery = deliveryRepository.findById(deliveryId);
+          if (delivery.isPresent()) {
+
+              return ApiResponse.<Object>builder()
+                      .success(true)
+                      .message("Delivery fetched successfully")
+                      .data(delivery)
+                      .build();
+          }
+
+          return ApiResponse.<Object>builder()
+                  .success(false)
+                  .message("Delivery not found")
+                  .data(null)
+                  .build();
+      }
+      catch (Exception e){
+
+          return ApiResponse.<Object>builder()
+                  .success(false)
+                  .message(e.getMessage())
+                  .data(null)
+                  .build();
+      }
+
   }
 
   @Override
   public ApiResponse<Delivery> orderDelivered(Long deliveryId){
       try{
-
           Optional<Delivery> lastDelivery = getLastOrderByDeliveryId(deliveryId);
           if(lastDelivery.isEmpty() || !lastDelivery.get().isStatus()){
               throw new Exception("Delivery Not Found or Already Delivered");
           }
-
           lastDelivery.get().setEndTime(Instant.now());
           lastDelivery.get().setStatus(false); //delivered so status false.
-
           deliveryRepository.save(lastDelivery.get());
 
           return ApiResponse.<Delivery>builder()
@@ -101,6 +119,7 @@ public class DeliveryServiceImpl implements DeliveryService {
                   .build();
       }
       catch (Exception e){
+
           return ApiResponse.<Delivery>builder()
                   .success(false)
                   .message(e.getMessage())
@@ -110,22 +129,21 @@ public class DeliveryServiceImpl implements DeliveryService {
   }
 
   private Optional<Delivery> getLastOrderByDeliveryManId(Long deliveryManId){
+
       return deliveryRepository.findByDeliveryManIdAndStatusTrue(deliveryManId);
   }
 
     private Optional<Delivery> getLastOrderByDeliveryId(Long deliveryId){
+
         return deliveryRepository.findById(deliveryId);
     }
     public ApiResponse<Map<String, Object>> getTopDeliveryMan(Instant startDate, Instant endDate) {
         try {
-            // Fetch top 3 using PageRequest
+            startDate = startDate.minusMillis(1);
+            endDate = endDate.plusMillis(1);
             List<TopDeliveryManDto> topEarners = deliveryRepository.findTop3DeliveryMenByCommission(
                     startDate, endDate, PageRequest.of(0, 3));
-
-            // Fetch overall average
             Double avgCommission = deliveryRepository.getAverageCommissionInInterval(startDate, endDate);
-
-            // Prepare a combined response map
             Map<String, Object> report = new HashMap<>();
             report.put("topEarners", topEarners);
             report.put("averageCommission", avgCommission != null ? avgCommission : 0.0);
@@ -136,6 +154,7 @@ public class DeliveryServiceImpl implements DeliveryService {
                     .data(report)
                     .build();
         } catch (Exception e) {
+
             return ApiResponse.<Map<String, Object>>builder()
                     .success(false)
                     .message("Error generating report: " + e.getMessage())

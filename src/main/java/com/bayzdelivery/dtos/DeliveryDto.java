@@ -15,6 +15,7 @@ import java.time.Instant;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DeliveryDto {
+
     @NotNull(message = "Distance is required")
     @Positive(message = "Distance must be greater than 0")
     private Long distance;

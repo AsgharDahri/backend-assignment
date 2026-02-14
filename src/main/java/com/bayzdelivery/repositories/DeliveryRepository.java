@@ -21,7 +21,9 @@ public interface DeliveryRepository extends CrudRepository<Delivery, Long> {
             "ORDER BY SUM(d.commission) DESC")
     List<TopDeliveryManDto> findTop3DeliveryMenByCommission(Instant startDate, Instant endDate, Pageable pageable);
 
-    @Query("SELECT AVG(d.commission) FROM Delivery d WHERE d.endTime BETWEEN :startDate AND :endDate AND d.status = false")
+    @Query("SELECT AVG(d.commission) FROM Delivery d WHERE d.startTime BETWEEN :startDate AND :endDate")
     Double getAverageCommissionInInterval(Instant startDate, Instant endDate);
+
+    List<Delivery> findByStartTimeBeforeAndStatusTrue(Instant cutoffTime);
 
 }

@@ -41,8 +41,4 @@ public class Person implements Serializable{
   @Column(name = "registration_number")
   String registrationNumber;
 
-
-
-
-
 }
