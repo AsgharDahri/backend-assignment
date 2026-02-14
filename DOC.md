@@ -27,6 +27,7 @@ After the app is up:
 
 - **Swagger URL:** http://localhost:8081/api/swagger-ui/index.html#/
 - **Host URL:** http://localhost:8081
+- **GITHUB URL:** https://github.com/AsgharDahri/backend-assignment/
 ## 5. Assumptions
 
 - **Create delivery:** used for creating a delivery.
